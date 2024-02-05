@@ -3,7 +3,7 @@ import mimetypes
 import re
 from collections import defaultdict
 from analysis_module import AnalysisModule, perform_overall_analysis
-from insights_module import generate_use_case_insights
+from insights_module import combine_insights, generate_use_case_insights
 
 def analyze_application(folder_path):
     # Create an instance of the AnalysisModule
@@ -17,6 +17,7 @@ def analyze_application(folder_path):
     name = ''
     creator = ''
     purpose = ''
+    use_case_matches = defaultdict(int)  # Initialize use_case_matches
 
     # Function to analyze each file
     def analyze_file(file_path):
@@ -37,7 +38,7 @@ def analyze_application(folder_path):
         file_types[mime_type] += 1
 
         # Functions in the file
-        functions = extract_functions_from_file(file_path)
+        functions = analysis_module.extract_functions_from_file(file_path)
         functions_per_file[file_path] = functions
 
         # Check if the file is a README or license file
@@ -45,42 +46,7 @@ def analyze_application(folder_path):
         is_license = re.match(r'license', os.path.basename(file_path), re.IGNORECASE)
 
         if is_readme or is_license:
-            extract_additional_info(file_path)
-
-    # Function to extract functions from a file
-    def extract_functions_from_file(file_path):
-        functions = []
-        with open(file_path, 'r') as file:
-            content = file.read()
-
-            # Use regular expressions to find function definitions
-            pattern = r'def\s+(\w+)\s*\('
-            functions = re.findall(pattern, content)
-
-        return functions
-
-    # Function to extract additional information from README or license files
-    def extract_additional_info(file_path):
-        nonlocal name, creator, purpose
-        with open(file_path, 'r') as file:
-            content = file.read()
-
-            # Search for name, creator, and purpose information
-            search_terms = {
-                'name': r'(?i)name:\s*(.*)',
-                'creator': r'(?i)creator:\s*(.*)',
-                'purpose': r'(?i)purpose:\s*(.*)',
-            }
-
-            for term, pattern in search_terms.items():
-                match = re.search(pattern, content)
-                if match:
-                    if term == 'name':
-                        name = match.group(1)
-                    elif term == 'creator':
-                        creator = match.group(1)
-                    elif term == 'purpose':
-                        purpose = match.group(1)
+            analysis_module.extract_additional_info(file_path)
 
     # Walk through the folder structure
     for root, dirs, files in os.walk(folder_path):
@@ -103,12 +69,12 @@ def analyze_application(folder_path):
         report_file.write(f"Total Folder Structure: {len(folder_structure)} folders\n\n")
 
         # Additional information
-        if name:
-            report_file.write(f"Application Name: {name}\n")
-        if creator:
-            report_file.write(f"Creator: {creator}\n")
-        if purpose:
-            report_file.write(f"Purpose: {purpose}\n")
+        if analysis_module.name:
+            report_file.write(f"Application Name: {analysis_module.name}\n")
+        if analysis_module.creator:
+            report_file.write(f"Creator: {analysis_module.creator}\n")
+        if analysis_module.purpose:
+            report_file.write(f"Purpose: {analysis_module.purpose}\n")
 
         # File Sizes
         report_file.write("\nFile Sizes:\n")
@@ -135,10 +101,10 @@ def analyze_application(folder_path):
     print(f"Analysis report saved to {report_path}")
 
     # Perform further analysis using the extracted information
-    perform_overall_analysis(name, creator, purpose)
+    perform_overall_analysis(analysis_module.name, analysis_module.creator, analysis_module.purpose)
 
     # Generate use case insights
-    generate_use_case_insights(folder_structure, functions_per_file)
+    use_case_matches = generate_use_case_insights(folder_structure, functions_per_file)
 
     # Sort use cases by number of keyword matches
     sorted_use_cases = sorted(use_case_matches.items(), key=lambda item: item[1], reverse=True)
@@ -161,14 +127,14 @@ def analyze_application(folder_path):
 
     # Print comprehensive report and analysis including all of the information obtained.
     print("\nComprehensive Report:")
-    print(f"Name: {name}")
-    print(f"Creator: {creator}")
-    print(f"Purpose: {purpose}")
+    print(f"Name: {analysis_module.name}")
+    print(f"Creator: {analysis_module.creator}")
+    print(f"Purpose: {analysis_module.purpose}")
 
     # Add this line at the end of the analyze_application function
-    folder_structure = ...
-    functions_per_file = ...
-    use_case_matches = ...
+    folder_structure = analysis_module.folder_structure
+    functions_per_file = analysis_module.functions_per_file
+    use_case_matches = use_case_matches
 
 # Example usage:
 analyze_application(r'I:\Createarth\Document_Analysis_ML')
