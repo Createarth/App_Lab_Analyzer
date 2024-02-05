@@ -1,0 +1,9 @@
+## License
+
+All rights reserved. This software and its associated documentation, including but not limited to code, text, and images, are owned by Nick Susco II and Createarth.com ("Licensor") and are protected by intellectual property laws. Unauthorized use, reproduction, or distribution of this software, in whole or in part, without the explicit written permission of the Licensor, is strictly prohibited.
+
+Any use of this software requires a valid license issued by the Licensor. For licensing inquiries, custom licensing arrangements, or any other related matters, please contact Nick Susco II.
+
+This software is provided "as is" without any warranties, express or implied. The Licensor disclaims all liability for damages resulting from the use, modification, or distribution of the software.
+
+© 2024 by Nick Susco II and Createarth.com - All rights reserved.
