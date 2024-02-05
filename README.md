@@ -1,37 +1,55 @@
 # App Lab Analyzer
 
-## Description
-
-`app_lab_analyzer.py` is a Python script designed for comprehensive analysis of applications or lab environments. It analyzes files, file sizes, file types, folder structure, functions within files, and provides insights into the overall purpose of the application.
+The App Lab Analyzer script is a Python tool designed for comprehensive analysis of applications, websites, databases, or any online directories. It analyzes files, file sizes, file types, folder structure, functions within files, and provides insights into the overall purpose of the given digital entity.
 
 ## Features
 
-- Analysis of file sizes and types
-- Examination of folder structure
-- Identification of functions within files
-- Extraction of additional information from README or license files
+- **File Analysis:** Extracts information such as file size, file type (MIME type), and identifies functions within Python files.
+- **Additional Information Extraction:** Attempts to extract additional details (name, creator, purpose) from README or license files.
+- **Report Generation:** Generates a comprehensive analysis report with statistics, file details, and folder structure information.
+- **Further Analysis:** Performs additional analysis using the extracted information to gain insights into the application.
+- **Use Case Insights:** Provides insights into potential use cases based on the folder structure and functions within files.
+- **Visual Representation:** Displays a visual representation of the application's directory structure.
 
 ## Usage
 
-1. Ensure you have Python installed on your system.
-2. Run the script by executing the following command in your terminal or command prompt:
-
 ```bash
-python app_lab_analyzer.py
+python app_lab_analyzer.py /path/to/application
 ```
 
-3. The script will generate an analysis report (`app_analysis_report.txt`) and a visual representation of the file structure (`file_structure.txt`) in the specified application or lab folder.
+Replace `/path/to/application` with the actual path to the application you want to analyze.
+
+## Installation
+
+1. Clone the repository:
+
+   ```bash
+   git clone https://github.com/Createarth/App_Lab_Analyzer.git
+   ```
+
+2. Navigate to the project directory:
+
+   ```bash
+   cd App_Lab_Analyzer
+   ```
+
+3. Install dependencies:
+
+   ```bash
+   pip install -r requirements.txt
+   ```
+
+## Requirements
+
+- Python 3.x
+- Other dependencies as specified in the `requirements.txt` file
 
 ## License
 
-This script is licensed under the [Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License](LICENSE).
+All rights reserved. This software and its associated documentation, including but not limited to code, text, and images, are owned by Nick Susco II and Createarth.com ("Licensor") and are protected by intellectual property laws. Unauthorized use, reproduction, or distribution of this software, in whole or in part, without the explicit written permission of the Licensor, is strictly prohibited.
 
-## Contribution
+Any use of this software requires a valid license issued by the Licensor. For licensing inquiries, custom licensing arrangements, or any other related matters, please contact Nick Susco II.
 
-Feel free to contribute by opening issues or submitting pull requests.
+This software is provided "as is" without any warranties, express or implied. The Licensor disclaims all liability for damages resulting from the use, modification, or distribution of the software.
 
-## Acknowledgments
-
-Special thanks to [OpenAI](https://openai.com/) for providing tools and resources.
-
- App_Lab_Analyzer © 2024 by Nick Susco II is licensed under Attribution-NonCommercial 4.0 International 
+© 2024 by Nick Susco II and Createarth.com - All rights reserved.
