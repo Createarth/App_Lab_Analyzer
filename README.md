@@ -23,21 +23,21 @@ Replace `/path/to/application` with the actual path to the application you want 
 
 1. Clone the repository:
 
-   ```bash
-   git clone https://github.com/Createarth/App_Lab_Analyzer.git
-   ```
+    ```bash
+    git clone https://github.com/Createarth/App_Lab_Analyzer.git
+    ```
 
 2. Navigate to the project directory:
 
-   ```bash
-   cd App_Lab_Analyzer
-   ```
+    ```bash
+    cd App_Lab_Analyzer
+    ```
 
 3. Install dependencies:
 
-   ```bash
-   pip install -r requirements.txt
-   ```
+    ```bash
+    pip install -r requirements.txt
+    ```
 
 ## Requirements
 
