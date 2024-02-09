@@ -1,13 +1,9 @@
 import os
-from collections import defaultdict
-import pandas as pd
-import matplotlib.pyplot as plt
-from fpdf import FPDF  # Added for PDF report generation
-
-import os
 import mimetypes
 import re
-from collections import defaultdict
+import pandas as pd
+from fpdf import FPDF
+import matplotlib.pyplot as plt
 
 class AnalysisModule:
     def __init__(self, folder_path):
@@ -21,33 +17,29 @@ class AnalysisModule:
         self.purpose = ''
 
     def analyze(self):
-        # Analyze the folder structure and collect information about each file
         for root, dirs, files in os.walk(self.folder_path):
             for file in files:
                 file_path = os.path.join(root, file)
-                # Extract information from the file
-                file_size = os.path.getsize(file_path)
-                file_type, _ = mimetypes.guess_type(file_path)
-                functions = self.extract_functions_from_file(file_path)
-                # Update the properties of the AnalysisModule instance
-                self.file_sizes[file_path] = file_size
-                self.file_types[file_path] = file_type
-                self.functions_per_file[file_path] = functions
-                # Update the folder structure
-                folder = os.path.relpath(root, self.folder_path)
-                if folder not in self.folder_structure:
-                    self.folder_structure[folder] = []
-                self.folder_structure[folder].append(file_path)
+                try:
+                    file_size = os.path.getsize(file_path)
+                    file_type, _ = mimetypes.guess_type(file_path)
+                    functions = self.extract_functions_from_file(file_path)
 
-                # Extract additional information from files
-                self.extract_additional_info(file_path)
+                    self.file_sizes[file_path] = file_size
+                    self.file_types[file_path] = file_type
+                    self.functions_per_file[file_path] = functions
+
+                    folder = os.path.relpath(root, self.folder_path)
+                    self.update_folder_structure(folder, file_path)
+
+                    self.extract_additional_info(file_path)
+                except Exception as e:
+                    print(f"Error analyzing file {file_path}: {e}")
 
     def extract_functions_from_file(self, file_path):
         functions = []
         with open(file_path, 'r') as file:
             content = file.read()
-
-            # Use regular expressions to find function definitions
             pattern = r'def\s+(\w+)\s*\('
             functions = re.findall(pattern, content)
 
@@ -56,8 +48,6 @@ class AnalysisModule:
     def extract_additional_info(self, file_path):
         with open(file_path, 'r') as file:
             content = file.read()
-
-            # Search for name, creator, and purpose information
             search_terms = {
                 'name': r'(?i)name:\s*(.*)',
                 'creator': r'(?i)creator:\s*(.*)',
@@ -67,211 +57,108 @@ class AnalysisModule:
             for term, pattern in search_terms.items():
                 match = re.search(pattern, content)
                 if match:
-                    if term == 'name':
-                        self.name = match.group(1)
-                    elif term == 'creator':
-                        self.creator = match.group(1)
-                    elif term == 'purpose':
-                        self.purpose = match.group(1)
+                    setattr(self, term, match.group(1))
 
-    def get_file_sizes(self):
-        return self.file_sizes
+    def update_folder_structure(self, folder, file_path):
+        if folder not in self.folder_structure:
+            self.folder_structure[folder] = []
+        self.folder_structure[folder].append(file_path)
 
-    def get_file_types(self):
-        return self.file_types
+    def app_insight(self):
+        insights = f"Insights for {self.name}\n"
+        insights += f"Created by {self.creator}\n"
+        insights += f"Purpose: {self.purpose}\n"
 
-    def get_functions_per_file(self):
-        return self.functions_per_file
+        return insights
 
-    def get_folder_structure(self):
-        return self.folder_structure
+    def app_insights(self):
+        insights = "Overall Application Insights\n"
+        insights += f"Average File Size: {self.calculate_average_file_size():.2f} bytes\n"
+        insights += f"Most Common File Type: {self.get_most_common_file_type()}\n"
+        insights += f"Number of Files in Each Folder:\n"
+        for folder, files in self.folder_structure.items():
+            insights += f"{folder}: {len(files)} files\n"
 
-    def get_name(self):
-        return self.name
+        return insights
 
-    def get_creator(self):
-        return self.creator
+    def calculate_average_file_size(self):
+        if not self.file_sizes:
+            return 0
+        return sum(self.file_sizes.values()) / len(self.file_sizes)
 
-    def get_purpose(self):
-        return self.purpose
+    def get_most_common_file_type(self):
+        if not self.file_types:
+            return "No file types found"
+        return max(self.file_types, key=self.file_types.get)
 
-def app_insight(name, creator, purpose):
-    """
-    Generate insights based on application details.
+    def generate_comprehensive_report(self):
+        summary = pd.Series(self.file_sizes).describe()
 
-    Args:
-        name (str): The name of the application.
-        creator (str): The creator or author of the application.
-        purpose (str): The purpose or intended use of the application.
+        plt.bar(self.file_sizes.keys(), self.file_sizes.values())
+        plt.title("File Sizes")
+        plt.xlabel("File Path")
+        plt.ylabel("Size (bytes)")
+        plt.savefig("file_sizes_bar_chart.png")
 
-    Returns:
-        str: Insights based on the provided details.
-    """
-    # Customize the insights generation based on your requirements
-    insights = f"Insights for {name}\n"
-    insights += f"Created by {creator}\n"
-    insights += f"Purpose: {purpose}\n"
+        pdf = FPDF()
+        pdf.add_page()
+        pdf.set_font("Arial", size=12)
+        pdf.cell(200, 10, txt="Comprehensive Report", ln=True, align='C')
+        pdf.ln(10)
+        pdf.multi_cell(0, 10, txt=f'Summary:\n{summary}\n\nBar Chart:\nSee attached image.', align='L')
+        pdf.output("report.pdf")
 
-    # Add more insights based on your analysis
+        with open('report.pdf', 'rb') as f:
+            report_content = f.read()
 
-    return insights
+        return report_content
 
-def app_insights(folder_structure, functions_per_file, file_sizes, file_types):
-    """
-    Generate insights based on overall application analysis.
+    def iterate_for_insights(self):
+        insights = ""
 
-    Args:
-        folder_structure (dict): Folder structure information.
-        functions_per_file (dict): Functions per file information.
-        file_sizes (dict): File sizes information.
-        file_types (dict): File types information.
+        for root, dirs, files in os.walk(self.folder_path):
+            for file in files:
+                file_path = os.path.join(root, file)
+                file_size = self.file_sizes[file_path]
+                file_type = self.file_types[file_path]
+                functions = self.functions_per_file[file_path]
 
-    Returns:
-        str: Overall insights based on the analysis.
-    """
-    # Customize the insights generation based on your requirements
-    insights = "Overall Application Insights\n"
+                file_insight = self.file_insights(file_path, file_size, file_type, functions)
+                insights += file_insight
 
-    # Additional Statistics (Future Enhancement)
-    insights += f"Average File Size: {calculate_average_file_size(file_sizes):.2f} bytes\n"
-    insights += f"Most Common File Type: {get_most_common_file_type(file_types)}\n"
-    insights += f"Number of Files in Each Folder:\n"
-    for folder, files in folder_structure.items():
-        insights += f"{folder}: {len(files)} files\n"
+        return insights
 
-    # Add more insights based on folder structure and functions per file
+    def file_insights(self, file_path, file_size, file_type, functions):
+        insights = f"Insights for {file_path}\n"
+        insights += f"Size: {file_size} bytes\n"
+        insights += f"Type: {file_type}\n"
 
-    return insights
+        insights += "Functions:\n"
+        for func in functions:
+            insights += f"  - {func}\n"
 
-def file_insights(file_path, file_size, file_type, functions):
-    """
-    Generate insights for an individual file.
+        return insights
 
-    Args:
-        file_path (str): The path of the file.
-        file_size (int): The size of the file in bytes.
-        file_type (str): The type or MIME type of the file.
-        functions (list): List of functions in the file.
+    def combine_insights(self):
+        try:
+            app_insight_info = self.app_insight()
+            app_insights_info = self.app_insights()
+            iterate_insights_info = self.iterate_for_insights()
 
-    Returns:
-        str: Insights for the individual file.
-    """
-    # Customize the insights generation based on your requirements
-    insights = f"Insights for {file_path}\n"
-    insights += f"Size: {file_size} bytes\n"
-    insights += f"Type: {file_type}\n"
+            combined_insights = app_insight_info + app_insights_info + iterate_insights_info
 
-    # Add insights based on functions in the file
+            comprehensive_report = self.generate_comprehensive_report()
+            return combined_insights, comprehensive_report
+        except Exception as e:
+            print(f"Error combining insights: {e}")
+            return "", b''
 
-    return insights
+# Example Usage:
+folder_path = "/path/to/your/application"
+analysis_module = AnalysisModule(folder_path)
+analysis_module.analyze()
 
-def calculate_average_file_size(file_sizes):
-    if not file_sizes:
-        return 0
-    return sum(file_sizes.values()) / len(file_sizes)
+combined_insights, comprehensive_report = analysis_module.combine_insights()
 
-def get_most_common_file_type(file_types):
-    if not file_types:
-        return "No file types found"
-    return max(file_types, key=file_types.get)
-
-def generate_comprehensive_report(data):
-    """
-    Generate a comprehensive report based on the provided data.
-
-    Args:
-        data (pd.DataFrame): The data to be analyzed.
-
-    Returns:
-        bytes: The content of the comprehensive report in PDF format.
-    """
-    # Generate a summary of the data
-    summary = data.describe()
-
-    # Create a bar chart of the data
-    data.plot(kind='bar', x='Name', y='Value')
-    
-    # Save the report to a PDF file
-    pdf = FPDF()
-    pdf.add_page()
-    pdf.set_font("Arial", size=12)
-    pdf.cell(200, 10, txt="Comprehensive Report", ln=True, align='C')
-    pdf.ln(10)
-    pdf.multi_cell(0, 10, txt=f'Summary:\n{summary}\n\nBar Chart:\nSee attached image.', align='L')
-    pdf.output("report.pdf")
-
-    # Return the content of the PDF report
-    with open('report.pdf', 'rb') as f:
-        report_content = f.read()
-
-    return report_content
-
-def iterate_for_insights(folder_path, analysis_module):
-    """
-    Iterate through the folder structure and generate insights.
-
-    Args:
-        folder_path (str): The path of the application folder.
-        analysis_module (AnalysisModule): An instance of the AnalysisModule.
-
-    Returns:
-        str: Insights generated for the entire application.
-    """
-    # Initialize insights variables
-    insights = ""
-
-    for root, dirs, files in os.walk(folder_path):
-        for file in files:
-            file_path = os.path.join(root, file)
-            # Extract information from the AnalysisModule instance
-            file_size = analysis_module.file_sizes[file_path]
-            file_type = analysis_module.file_types[file_path]
-            functions = analysis_module.functions_per_file[file_path]
-            # Generate insights for the file
-            file_insight = file_insights(file_path, file_size, file_type, functions)
-            insights += file_insight
-
-    return insights
-
-def generate_use_case_insights(folder_structure, functions_per_file):
-    # Define your logic for generating use case insights
-    return "Use case insights go here"
-
-def combine_insights(name, creator, purpose, folder_path, analysis_module):
-    """
-    Generate combined insights and use case insights.
-
-    Args:
-        name (str): The name of the application.
-        creator (str): The creator or author of the application.
-        purpose (str): The purpose or intended use of the application.
-        folder_path (str): The path to the folder to be analyzed.
-        analysis_module (AnalysisModule): The analysis module to be used.
-
-    Returns:
-        tuple: Combined insights, use case insights, and the report.
-    """
-    # Generate application insights
-    app_insight_info = app_insight(name, creator, purpose)
-    
-    # Generate overall application insights
-    app_insights_info = app_insights(
-        analysis_module.folder_structure,
-        analysis_module.functions_per_file,
-        analysis_module.file_sizes,
-        analysis_module.file_types
-    )
-    
-    # Iterate through the folder structure and generate insights
-    iterate_insights_info = iterate_for_insights(folder_path, analysis_module)
-    
-    # Combine all insights
-    combined_insights = app_insight_info + app_insights_info + iterate_insights_info
-    
-    # Generate use case insights (customize this part based on your requirements)
-    use_case_insights = generate_use_case_insights(
-        analysis_module.folder_structure,
-        analysis_module.functions_per_file
-    )
-    
-    return combined_insights, use_case_insights, generate_comprehensive_report(analysis_module.get_file_sizes())
+print(combined_insights)
+# The comprehensive_report variable contains the content of the PDF report.
