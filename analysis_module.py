@@ -1,26 +1,11 @@
 import os
 import mimetypes
 import re
+import pandas as pd
+import matplotlib.pyplot as plt
+from fpdf import FPDF
 from collections import defaultdict
 
-class FileInsights:
-    def __init__(self, file_path, file_size, file_type, functions):
-        self.file_path = file_path
-        self.file_size = file_size
-        self.file_type = file_type
-        self.functions = functions
-
-    def generate_insights(self):
-        insights = f"Insights for {self.file_path}\n"
-        insights += f"Size: {self.file_size} bytes\n"
-        insights += f"Type: {self.file_type}\n"
-
-        # Add insights based on functions in the file
-        insights += "Functions:\n"
-        for func in self.functions:
-            insights += f"  - {func}\n"
-
-        return insights
 
 class AnalysisModule:
     def __init__(self):
@@ -183,3 +168,9 @@ class AnalysisModule:
     # Additional Visualizations (Future Enhancement)
     def plot_additional_statistics(self):
         pass  # Placeholder for future visualization implementation
+
+
+# Test the code
+folder_path = "/home/nick/App_Lab_Analyzer"
+analysis_module = AnalysisModule()
+analysis_module.analyze_application(folder_path, report_path="analysis_report.txt")
