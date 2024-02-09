@@ -1,6 +1,6 @@
 # App Lab Analyzer
 
-The App Lab Analyzer script is a Python tool designed for comprehensive analysis of applications, websites, databases, or any online directories. It analyzes files, file sizes, file types, folder structure, functions within files, and provides insights into the overall purpose of the given digital entity.
+The App Lab Analyzer is a Python tool designed for comprehensive analysis of applications, websites, databases, or any online directories. It analyzes files, file sizes, file types, folder structure, functions within files, and provides insights into the overall purpose of the given digital entity.
 
 ## Features
 
@@ -13,9 +13,9 @@ The App Lab Analyzer script is a Python tool designed for comprehensive analysis
 
 ## Usage
 
-```bash
+bash
 python app_lab_analyzer.py /path/to/application
-```
+
 
 Replace `/path/to/application` with the actual path to the application you want to analyze.
 
@@ -23,21 +23,17 @@ Replace `/path/to/application` with the actual path to the application you want 
 
 1. Clone the repository:
 
-    ```bash
-    git clone https://github.com/Createarth/App_Lab_Analyzer.git
-    ```
+   bash
+   git clone https://github.com/Createarth/App_Lab_Analyzer.git
 
 2. Navigate to the project directory:
 
-    ```bash
-    cd App_Lab_Analyzer
-    ```
-
+   bash
+   cd App_Lab_Analyzer
 3. Install dependencies:
 
-    ```bash
-    pip install -r requirements.txt
-    ```
+   bash
+   pip install -r requirements.txt
 
 ## Requirements
 
@@ -46,7 +42,9 @@ Replace `/path/to/application` with the actual path to the application you want 
 
 ## License
 
-All rights reserved. This software and its associated documentation, including but not limited to code, text, and images, are owned by Nick Susco II and Createarth.com ("Licensor") and are protected by intellectual property laws. Unauthorized use, reproduction, or distribution of this software, in whole or in part, without the explicit written permission of the Licensor, is strictly prohibited.
+All rights reserved. This software and its associated documentation, including but not limited to code, text, and images, are owned by Nick Susco II and Createarth.com ("Licensor") and are protected by intellectual property laws.
+
+Unauthorized use, reproduction, or distribution of this software, in whole or in part, without the explicit written permission of the Licensor, is strictly prohibited.
 
 Any use of this software requires a valid license issued by the Licensor. For licensing inquiries, custom licensing arrangements, or any other related matters, please contact Nick Susco II.
 
